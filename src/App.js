@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+function DeleteButton(onClick) {
+  return <input type='button' value='x' onClick={onClick} />
+}
+
 function Item(item, onClick) {
   return (
-    <li key={item}><input type='button' value='x' onClick={onClick} />{item}</li>
+    <li key={item}>{DeleteButton(onClick)}{item}</li>
   );
 }
 
@@ -13,20 +17,19 @@ class List extends Component {
     super(props);
     this.state = {
       items: [],
+      newitem: '',
     };
   }
 
   addItem() {
-    var newitemEl = document.getElementById('newitem');
-    var newitem = newitemEl.value;
+    var newitem = this.state.newitem;
     if (!newitem || newitem.length == 0) return;
     const newitems = this.state.items.slice();
     newitems.push(newitem);
     this.setState({
       items: newitems,
+      newitem: '',
     });
-    newitemEl.value = '';
-    newitemEl.focus();
   }
 
   removeItem(i) {
@@ -41,14 +44,18 @@ class List extends Component {
     this.addItem();
   }
 
+  onchange = (e) => {
+    this.setState({newitem: e.currentTarget.value});
+  }
+
   render() {
     var self = this;
     return (
       <div>
-        <input id='newitem' onKeyPress={e => this.onkeypress(e) }/>
+        <input id='newitem' value={this.state.newitem} onChange={this.onchange} onKeyPress={e => this.onkeypress(e)} />
         <input type='button' value='Add' onClick={() => this.addItem()} />
         <ul id='list'>
-          {this.state.items.map(function(item, idx) { return Item(item, (function(i) { return function() { self.removeItem(i); } })(idx)); })}
+          {this.state.items.map(function(item, idx) { return Item(item, self.removeItem.bind(self, idx)); })}
         </ul>
       </div>
     );
