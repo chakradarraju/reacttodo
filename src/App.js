@@ -8,7 +8,7 @@ function DeleteButton(onClick) {
 
 function Item(item, onClick) {
   return (
-    <li key={item}>{DeleteButton(onClick)}{item}</li>
+    <li key={item}>{DeleteButton(onClick)} {item}</li>
   );
 }
 
@@ -24,19 +24,15 @@ class List extends Component {
   addItem() {
     var newitem = this.state.newitem;
     if (!newitem || newitem.length == 0) return;
-    const newitems = this.state.items.slice();
-    newitems.push(newitem);
+    this.state.items.push(newitem);
     this.setState({
-      items: newitems,
       newitem: '',
     });
   }
 
   removeItem(i) {
     this.state.items.splice(i, 1);
-    this.setState({
-      items: this.state.items,
-    });
+    this.forceUpdate();
   }
 
   onkeypress(e) {
